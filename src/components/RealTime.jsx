@@ -1,21 +1,50 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import CardData from "./CardData";
+// import axios from "axios";
 
 const RealTime = () => {
-  const [data, setData] = useState([]);
+  const [sensorData, setSensorData] = useState([]);
 
+  // const ambilData = (callback) => {
+  //   axios
+  //   .get("http://localhost/nyoba_ultrasonic/data.php")
+  //   .then((res)=>{
+  //     callback(res.data)
+  //   })
+  //   .catch((err)=>{
+  //     console.log(err)
+  //   })
+  // }
+  
+  // Fungsi untuk memuat data dari API
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`http://localhost/nyoba_ultrasonic/data.php`);
+      const data = await response.json();
+      setSensorData(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // Memanggil fetchData setiap 5 detik menggunakan useEffect dan setInterval
   useEffect(() => {
-    // Simulasi pengumpulan data
-    const interval = setInterval(() => {
-      const newData = Array.from({ length: 10 }, () =>
-        Math.floor(Math.random() * 100)
-      );
-      setData(newData);
-    }, 1000);
+    fetchData(); // Fetch data on component mount
+    const interval = setInterval(fetchData, 5000); // Polling every 5 seconds
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
+
+  // useEffect(() => {
+  //   ambilData((data)=>{
+  //     setSensorData(data)
+  //   })
+  // }, []);
+
+  // Extracting data for the plot
+  const xData = sensorData.length > 0 ? sensorData.map(data => data.date) : [];
+  const yData = sensorData.length > 0 ? sensorData.map(data => data.ket_ultrasonic) : [];
 
   return (
     <div className="max-w-[1240px] w-full  h-full mx-auto flex flex-col  pt-8 pb-8">
@@ -129,24 +158,24 @@ const RealTime = () => {
                   className="flex w-full h-[300px]"
                   data={[
                     {
-                      x: Array.from({ length: data.length }, (_, i) => i),
-                      y: data,
+                      x: xData,
+                      y: yData,
                       type: "scatter",
                       mode: "lines+markers",
                       marker: { color: "blue" },
                       name: "Sensor Level",
                     },
                     {
-                      x: Array.from({ length: data.length }, (_, i) => i),
-                      y: data.map((d) => d - 20),
+                      x: xData,
+                      y: yData,
                       type: "scatter",
                       mode: "lines+markers",
                       marker: { color: "red" },
                       name: "Sensor Pressure",
                     },
                     {
-                      x: Array.from({ length: data.length }, (_, i) => i),
-                      y: data.map((d) => d - 50),
+                      x: xData,
+                      y: yData,
                       type: "scatter",
                       mode: "lines+markers",
                       marker: { color: "green" },
@@ -184,8 +213,8 @@ const RealTime = () => {
                     className="flex w-full  h-[300px]"
                     data={[
                       {
-                        x: Array.from({ length: data.length }, (_, i) => i),
-                        y: data,
+                        x: xData,
+                        y: yData,
                         type: "scatter",
                         mode: "lines+markers",
                         marker: { color: "blue" },

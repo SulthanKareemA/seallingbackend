@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { waves } from "../constants";
 
 const Peringatan = () => {
+  const [email, setEmail] = useState('');
+
+    const sendData = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/data`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email }),
+            });
+            if (response.ok) {
+                console.log('Data sent successfully');
+                setEmail('');
+            } else {
+                console.error('Error sending data');
+            }
+        } catch (error) {
+            console.error('Error sending data:', error);
+        }
+    };
   return (
     <div className="w-full py-10 bg-white px-6">
       <div className="max-w-md md:w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden animated">
@@ -21,7 +42,7 @@ const Peringatan = () => {
               </p>
             </h1>
 
-            <form>
+            <form onSubmit={sendData}>
               <label className="block">
                 <span className="block text-sm font-normal pl-4 p-1 text-slate-900">
                   Email:
@@ -30,6 +51,8 @@ const Peringatan = () => {
                   <input
                     name="email"
                     type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full text-sm text-black border border-black rounded-full p-2 pl-4 outline-none "
                     placeholder="Masukan email anda"
@@ -41,7 +64,7 @@ const Peringatan = () => {
               </label>
             </form>
             <a href="/">
-              <button className="w-full  transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:text-white bg-slate-900 text-white h-10 mt-5 rounded-full font-medium mx-auto">
+              <button onClick={sendData} className="w-full  transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:text-white bg-slate-900 text-white h-10 mt-5 rounded-full font-medium mx-auto">
                 Kirim
               </button>
             </a>
