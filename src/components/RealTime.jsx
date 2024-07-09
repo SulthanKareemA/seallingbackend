@@ -5,46 +5,48 @@ import CardData from "./CardData";
 
 const RealTime = () => {
   const [sensorData, setSensorData] = useState([]);
-
-  // const ambilData = (callback) => {
-  //   axios
-  //   .get("http://localhost/nyoba_ultrasonic/data.php")
-  //   .then((res)=>{
-  //     callback(res.data)
-  //   })
-  //   .catch((err)=>{
-  //     console.log(err)
-  //   })
-  // }
+  const [error, setError] = useState(null);
   
   // Fungsi untuk memuat data dari API
   const fetchData = async () => {
     try {
       const response = await fetch(`http://localhost/nyoba_ultrasonic/data.php`);
       const data = await response.json();
-      setSensorData(data);
+      console.log('Data received from API:', data);
+      if (data && Array.isArray(data.result)) {
+        setSensorData(data.result);
+        setError(null); // Clear any previous errors
+        console.log('Sensor data is set:', data.result);
+      } else {
+        setError('Data received is not an array');
+        console.error('Data received is not an array:', data);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  // Memanggil fetchData setiap 5 detik menggunakan useEffect dan setInterval
   useEffect(() => {
-    fetchData(); // Fetch data on component mount
-    const interval = setInterval(fetchData, 5000); // Polling every 5 seconds
-
-    return () => clearInterval(interval); // Clean up interval on component unmount
+    fetchData((data)=>{
+      setSensorData(data)
+    });
+    const interval = setInterval(fetchData, 5000); // Fetch data every 5 seconds
+    return () => clearInterval(interval);
   }, []);
 
-  // useEffect(() => {
-  //   ambilData((data)=>{
-  //     setSensorData(data)
-  //   })
-  // }, []);
+  console.log('Is sensorData an array?', Array.isArray(sensorData));
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!Array.isArray(sensorData)) {
+    return <div>Error: sensorData is not an array</div>;
+  }
 
   // Extracting data for the plot
-  const xData = sensorData.length > 0 ? sensorData.map(data => data.date) : [];
-  const yData = sensorData.length > 0 ? sensorData.map(data => data.ket_ultrasonic) : [];
+  const xData = sensorData.map(data => data.date);
+  const yData = sensorData.map(data => data.ket_ultrasonic);
 
   return (
     <div className="max-w-[1240px] w-full  h-full mx-auto flex flex-col  pt-8 pb-8">

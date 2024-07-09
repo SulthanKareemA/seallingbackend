@@ -3,26 +3,28 @@ import { waves } from "../constants";
 
 const Peringatan = () => {
   const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
 
-    const sendData = async () => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/data`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email: email }),
-            });
-            if (response.ok) {
-                console.log('Data sent successfully');
-                setEmail('');
-            } else {
-                console.error('Error sending data');
-            }
-        } catch (error) {
-            console.error('Error sending data:', error);
-        }
-    };
+  const sendData = async (event) => {
+    event.preventDefault(); // Mencegah default form submission
+    const data = {email}
+    try {
+      const response = await fetch('http://localhost/nyoba_ultrasonic/data_email.php', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      setMessage(result.message);
+  } catch (error) {
+      console.error('Error:', error);
+      setMessage('Error submitting form');
+  }
+};
+
   return (
     <div className="w-full py-10 bg-white px-6">
       <div className="max-w-md md:w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden animated">
@@ -50,7 +52,7 @@ const Peringatan = () => {
                 <div className="relative flex items-center">
                   <input
                     name="email"
-                    type="text"
+                    type="email" // Mengubah type menjadi email untuk validasi yang lebih baik
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -62,12 +64,11 @@ const Peringatan = () => {
                   *Pastikan email yang anda masukan sudah benar.
                 </p>
               </label>
-            </form>
-            <a href="/">
-              <button onClick={sendData} className="w-full  transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:text-white bg-slate-900 text-white h-10 mt-5 rounded-full font-medium mx-auto">
+              <button type="submit" className="w-full transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:text-white bg-slate-900 text-white h-10 mt-5 rounded-full font-medium mx-auto">
                 Kirim
               </button>
-            </a>
+            </form>
+            {message && <p>{message}</p>}
           </div>
         </div>
       </div>
