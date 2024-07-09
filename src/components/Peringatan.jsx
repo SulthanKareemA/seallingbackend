@@ -20,8 +20,7 @@ const Peringatan = () => {
       const result = await response.json();
       setMessage(result.message);
   } catch (error) {
-      console.error('Error:', error);
-      setMessage('Error submitting form');
+      
   }
 };
 
@@ -64,10 +63,12 @@ const Peringatan = () => {
                   *Pastikan email yang anda masukan sudah benar.
                 </p>
               </label>
+            </form>
+              <a href="/">
               <button type="submit" className="w-full transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:text-white bg-slate-900 text-white h-10 mt-5 rounded-full font-medium mx-auto">
                 Kirim
               </button>
-            </form>
+              </a>
             {message && <p>{message}</p>}
           </div>
         </div>
