@@ -23,7 +23,6 @@ function App() {
         <Route path="/edukasi" element={<Edukasi />} />
         <Route path="/penelitian" element={<Penelitian />} />
         <Route path="/peralatan" element={<Peralatan />} />
-        <Route path="/data" element={<hasilData/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
