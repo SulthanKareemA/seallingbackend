@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-// import axios from 'axios';
 import { waves } from "../constants";
-// import nodemailer from 'nodemailer';
+
 
 const Peringatan = () => {
   const [email, setEmail] = useState('');
@@ -40,6 +39,11 @@ const Peringatan = () => {
   const handleGoHome = () => {
     window.location.href = '/';
   };
+
+  // useEffect(() => {
+  //   const interval = setInterval(fetchDataAndSendNotifications, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <div className="w-full py-10 bg-white px-6">
